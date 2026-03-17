@@ -1,8 +1,33 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function HomePage() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    // Close menu when window is resized to desktop size
+    const handleResize = () => {
+      if (window.innerWidth > 900) {
+        setMenuOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    // Close menu when a link is clicked
+    if (menuOpen) {
+      const links = document.querySelectorAll('.mobile-nav-links a');
+      const handler = () => setMenuOpen(false);
+      links.forEach((link) => link.addEventListener('click', handler));
+      return () => {
+        links.forEach((link) => link.removeEventListener('click', handler));
+      };
+    }
+  }, [menuOpen]);
+
   useEffect(() => {
     const cursor = document.getElementById('cursor');
     const ring = document.getElementById('cursorRing');
@@ -53,8 +78,8 @@ export default function HomePage() {
     });
 
     const mq = window.matchMedia('(max-width: 900px)');
-    const handleMQ = (e: MediaQueryListEvent | MediaQueryList) => {
-      if (e.matches) {
+    const handleMQ = (matches: boolean) => {
+      if (matches) {
         document.body.style.cursor = 'auto';
         (cursor as HTMLElement).style.display = 'none';
         (ring as HTMLElement).style.display = 'none';
@@ -64,8 +89,9 @@ export default function HomePage() {
         (ring as HTMLElement).style.display = 'block';
       }
     };
-    handleMQ(mq);
-    mq.addEventListener('change', handleMQ as any);
+    const mqChangeHandler = (e: MediaQueryListEvent) => handleMQ(e.matches);
+    handleMQ(mq.matches);
+    mq.addEventListener('change', mqChangeHandler);
 
     return () => {
       document.removeEventListener('mousemove', moveHandler);
@@ -74,7 +100,7 @@ export default function HomePage() {
         el.removeEventListener('mouseenter', enter);
         el.removeEventListener('mouseleave', leave);
       });
-      mq.removeEventListener('change', handleMQ as any);
+      mq.removeEventListener('change', mqChangeHandler);
     };
   }, []);
 
@@ -212,13 +238,24 @@ export default function HomePage() {
 
   useEffect(() => {
     const btns = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
-    const handler = (btn: HTMLButtonElement) => () => {
+    const clickHandlers = new Map<HTMLButtonElement, EventListener>();
+
+    const buildHandler = (btn: HTMLButtonElement) => () => {
       btns.forEach((b) => b.classList.remove('active'));
       btn.classList.add('active');
     };
-    btns.forEach((btn) => btn.addEventListener('click', handler(btn)));
+
+    btns.forEach((btn) => {
+      const handler = buildHandler(btn);
+      clickHandlers.set(btn, handler);
+      btn.addEventListener('click', handler);
+    });
+
     return () => {
-      btns.forEach((btn) => btn.replaceWith(btn.cloneNode(true)));
+      btns.forEach((btn) => {
+        const handler = clickHandlers.get(btn);
+        if (handler) btn.removeEventListener('click', handler);
+      });
     };
   }, []);
 
@@ -236,7 +273,11 @@ export default function HomePage() {
 
   useEffect(() => {
     const anchors = document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]');
-    const handler = (a: HTMLAnchorElement) => (e: MouseEvent) => {
+    const clickHandlers = new Map<HTMLAnchorElement, EventListener>();
+
+    const buildHandler =
+      (a: HTMLAnchorElement): EventListener =>
+      (e: Event) => {
       const href = a.getAttribute('href');
       if (!href) return;
       const target = document.querySelector(href) as HTMLElement | null;
@@ -245,9 +286,18 @@ export default function HomePage() {
         target.scrollIntoView({ behavior: 'smooth' });
       }
     };
-    anchors.forEach((a) => a.addEventListener('click', handler(a)));
+
+    anchors.forEach((a) => {
+      const handler = buildHandler(a);
+      clickHandlers.set(a, handler);
+      a.addEventListener('click', handler);
+    });
+
     return () => {
-      anchors.forEach((a) => a.replaceWith(a.cloneNode(true)));
+      anchors.forEach((a) => {
+        const handler = clickHandlers.get(a);
+        if (handler) a.removeEventListener('click', handler);
+      });
     };
   }, []);
 
@@ -291,9 +341,35 @@ export default function HomePage() {
             <a href="#contact">Contact</a>
           </li>
         </ul>
-        <a className="nav-cta" href="#contact">
-          Ignite Your Brand
-        </a>
+        <button
+          className={`hamburger ${menuOpen ? 'open' : ''}`}
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle navigation menu"
+        >
+          <span className="hamburger-line" />
+          <span className="hamburger-line" />
+          <span className="hamburger-line" />
+        </button>
+        <div className={`mobile-nav-overlay ${menuOpen ? 'open' : ''}`} />
+        <div className={`mobile-nav ${menuOpen ? 'open' : ''}`}>
+          <ul className="mobile-nav-links">
+            <li>
+              <a href="#home">Home</a>
+            </li>
+            <li>
+              <a href="#services">Services</a>
+            </li>
+            <li>
+              <a href="#portfolio">Portfolio</a>
+            </li>
+            <li>
+              <a href="#about">About</a>
+            </li>
+            <li>
+              <a href="#contact">Contact</a>
+            </li>
+          </ul>
+        </div>
       </nav>
 
       <section id="home">
@@ -475,43 +551,81 @@ export default function HomePage() {
           <div className="services-grid reveal">
             {[
               {
-                icon: '⚡',
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+                    <polyline points="13 2 13 9 20 9" />
+                    <path d="M12 14v-2M12 18v-2M8 14v-2M8 18v-2" />
+                  </svg>
+                ),
                 num: '01',
                 title: 'Digital Branding',
                 copy: 'We craft compelling brand identities that resonate with your target audience and establish a strong digital presence across all platforms.',
               },
               {
-                icon: '🖥',
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                    <line x1="8" y1="21" x2="16" y2="21" />
+                    <line x1="12" y1="17" x2="12" y2="21" />
+                  </svg>
+                ),
                 num: '02',
                 title: 'Web Design',
                 copy: 'We create stunning, responsive websites that captivate your audience and drive conversions with intuitive user experiences.',
               },
               {
-                icon: '⚙️',
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <circle cx="12" cy="12" r="1" />
+                    <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m4.24-4.24l4.24-4.24" />
+                  </svg>
+                ),
                 num: '03',
                 title: 'Web Development',
                 copy: 'Our expert developers build robust, scalable web applications using cutting-edge technologies and best practices.',
               },
               {
-                icon: '📡',
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 6v6l4 2" />
+                  </svg>
+                ),
                 num: '04',
                 title: 'Digital Marketing',
                 copy: 'We develop strategic marketing campaigns that increase your online visibility and drive qualified traffic to your business.',
               },
               {
-                icon: '📱',
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+                    <line x1="12" y1="18" x2="12" y2="18.01" />
+                  </svg>
+                ),
                 num: '05',
                 title: 'Mobile App Development',
                 copy: 'We create native and cross-platform mobile applications that deliver exceptional user experiences across all devices.',
               },
               {
-                icon: '🛒',
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <circle cx="9" cy="21" r="1" />
+                    <circle cx="20" cy="21" r="1" />
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                  </svg>
+                ),
                 num: '06',
                 title: 'E-Commerce Solutions',
                 copy: 'We build secure, scalable online stores that provide seamless shopping experiences and drive sales for your business.',
               },
               {
-                icon: '✦',
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                  </svg>
+                ),
                 num: '07',
                 title: 'UI/UX Design',
                 copy: 'We design intuitive interfaces and seamless user experiences that engage your audience and increase conversion rates.',
@@ -545,37 +659,69 @@ export default function HomePage() {
           <div className="portfolio-grid reveal reveal-delay-3">
             {[
               {
-                icon: '📊',
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <line x1="12" y1="2" x2="12" y2="22" />
+                    <path d="M17 5H9a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z" />
+                  </svg>
+                ),
                 cat: 'Web Design',
                 title: 'TechVision Dashboard',
                 desc: 'Analytics platform with dark theme and data visualization.',
               },
               {
-                icon: '💪',
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M6 9c0 1.5 4 4 6 4s6-2.5 6-4M8 15c-.5 1.5-1 3-1 4s1 2 4 2 5-1 5-2-1-2.5-2-4" />
+                    <circle cx="12" cy="4" r="2" />
+                  </svg>
+                ),
                 cat: 'Mobile App',
                 title: 'FitTrack App',
                 desc: 'Fitness tracking with progress charts and workout stats.',
               },
               {
-                icon: '👗',
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
+                    <path d="M9 9h6M9 13h4M9 17h2" />
+                  </svg>
+                ),
                 cat: 'Branding',
                 title: 'Luxe Fashion Branding',
                 desc: 'Minimalist luxury brand identity with premium packaging.',
               },
               {
-                icon: '🛍',
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <circle cx="9" cy="21" r="1" />
+                    <circle cx="20" cy="21" r="1" />
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                  </svg>
+                ),
                 cat: 'Web Design',
                 title: 'ElectroShop E-commerce',
                 desc: 'Electronics store with seamless shopping experience.',
               },
               {
-                icon: '🍔',
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M5 18c0 1.5 2 3 4 3s4-1.5 4-3" />
+                    <circle cx="9" cy="8" r="2" />
+                    <path d="M15 9h4V6h-4v3zM15 15h4v-3h-4v3z" />
+                  </svg>
+                ),
                 cat: 'Mobile App',
                 title: 'QuickBite Delivery',
                 desc: 'Food delivery app with real-time order tracking.',
               },
               {
-                icon: '🏢',
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                  </svg>
+                ),
                 cat: 'Branding',
                 title: 'NexTech Corporate Identity',
                 desc: 'Full corporate branding for tech startup.',

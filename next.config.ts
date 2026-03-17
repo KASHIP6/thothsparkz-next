@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
     "http://127.0.0.1:3000",
     "http://169.254.96.159:3000",
   ],
+  compiler: {
+    styledComponents: true,
+  },
 };
 
 export default nextConfig;
