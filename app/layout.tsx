@@ -1,40 +1,16 @@
 import type { Metadata } from "next";
-import { Cinzel, Cormorant_Garamond, Geist, Geist_Mono, Rajdhani } from "next/font/google";
 import "./globals.css";
-import { StyledComponentsRegistry } from "../lib/styled-components-registry";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const rajdhani = Rajdhani({
-  variable: "--font-rajdhani",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const cinzel = Cinzel({
-  variable: "--font-cinzel",
-  subsets: ["latin"],
-  weight: ["400", "600", "700", "900"],
-});
-
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-});
+import { fontVariables } from "@/lib/fonts";
+import { siteConfig } from "@/lib/content";
+import Navbar from "@/app/components/layout/Navbar";
+import Footer from "@/app/components/layout/Footer";
 
 export const metadata: Metadata = {
-  title: "Thoth Sparkz | Digital Excellence Agency",
-  description:
-    "Thoth Sparkz crafts premium branding, web experiences, and digital products from Wayanad to the world.",
+  title: {
+    default: `${siteConfig.name} | ${siteConfig.tagline}`,
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
 };
 
 export default function RootLayout({
@@ -43,11 +19,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${rajdhani.variable} ${cinzel.variable} ${cormorant.variable} antialiased`}
-      >
-        <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Set the theme before first paint to avoid a flash of the wrong mode. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`,
+          }}
+        />
+      </head>
+      <body className={`${fontVariables} bg-base text-ink antialiased`}>
+        <Navbar />
+        <main className="pt-16">{children}</main>
+        <Footer />
       </body>
     </html>
   );
