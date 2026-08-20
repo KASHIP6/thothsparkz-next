@@ -1,17 +1,9 @@
-import Loader from "./components/Loader";
+import Loader from "@/app/components/Loader";
 
 export default function Loading() {
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "grid",
-        placeItems: "center",
-        background: "#000",
-      }}
-    >
+    <div className="grid min-h-[60vh] place-items-center bg-base">
       <Loader />
     </div>
   );
 }
-
