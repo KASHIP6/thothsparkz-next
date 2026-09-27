@@ -1,53 +1,51 @@
-import Container from "@/app/components/ui/Container";
 import Button from "@/app/components/ui/Button";
 import Reveal from "@/app/components/ui/Reveal";
 
-type Props = {
-  title?: string;
-  subtitle?: string;
-};
-
-export default function CTA({
-  title = "Have a vision? Let’s ignite it together.",
-  subtitle = "Tell us about your project and we’ll craft something unforgettable.",
-}: Props) {
+export default function CTA() {
   return (
-    <section className="py-24">
-      <Container>
-        <Reveal>
-          <div className="relative overflow-hidden rounded-3xl bg-noir px-8 py-16 text-center sm:px-16">
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-0"
-              style={{
-                background:
-                  "radial-gradient(50% 60% at 50% 0%, rgba(200,162,76,0.18), transparent 70%)",
-              }}
-            />
-            <div className="relative">
-              <h2 className="mx-auto max-w-2xl font-display text-4xl font-semibold leading-tight text-white sm:text-5xl">
-                {title}
+    <section className="relative overflow-hidden bg-noir py-20">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(50% 60% at 50% 100%, rgba(216,169,82,0.12), transparent 70%)",
+        }}
+      />
+
+      <div className="relative mx-auto max-w-[1440px] px-6 sm:px-8 lg:px-20">
+        <div className="grid items-center gap-10 lg:grid-cols-[auto_1fr_auto]">
+          <Reveal>
+            <p className="eyebrow leading-relaxed text-gold">
+              Let&apos;s create<br />what&apos;s next.
+            </p>
+          </Reveal>
+
+          <Reveal delay={80}>
+            <div className="text-center">
+              <h2 className="text-[clamp(1.3rem,2.5vw,1.5rem)] font-normal tracking-wide">
+                Ready to spark
               </h2>
-              <p className="mx-auto mt-5 max-w-xl text-lg text-white/60">
-                {subtitle}
-              </p>
-              <div className="mt-9 flex flex-wrap justify-center gap-4">
-                <Button href="/contact" variant="primary" size="lg">
-                  Start a Project
-                </Button>
-                <Button
-                  href="/portfolio"
-                  variant="ghost"
-                  size="lg"
-                  className="text-white hover:text-gold-bright"
-                >
-                  See Our Work
+              <h2 className="text-[clamp(1.5rem,3vw,1.6rem)] font-bold tracking-wide">
+                a brighter tomorrow?
+              </h2>
+              <div className="mt-8">
+                <Button href="/contact" variant="gold" size="lg">
+                  Start a Conversation&ensp;→
                 </Button>
               </div>
             </div>
-          </div>
-        </Reveal>
-      </Container>
+          </Reveal>
+
+          <Reveal delay={160} className="hidden lg:block">
+            <p className="text-xs leading-relaxed text-muted">
+              Tell us where your brand is today.<br />
+              We&apos;ll help define where it should<br />
+              go next.
+            </p>
+          </Reveal>
+        </div>
+      </div>
     </section>
   );
 }

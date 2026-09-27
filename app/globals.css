@@ -1,64 +1,41 @@
 @import "tailwindcss";
 
-/* Manual dark mode: `dark:` utilities apply under [data-theme="dark"]. */
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
-
-/* ------------------------------------------------------------------ */
-/* Design tokens — modern & clean, refined gold on a warm neutral base */
-/* ------------------------------------------------------------------ */
 @theme {
-  --color-base: #faf9f6;
-  --color-surface: #ffffff;
-  --color-ink: #171717;
-  --color-onink: #ffffff; /* text/icon that sits on an ink-colored fill */
-  --color-muted: #6b6b6b;
-  --color-line: #e7e5de;
-  --color-gold: #a97f2e;
-  --color-gold-bright: #c8a24c;
-  --color-gold-soft: #f4ecd9;
-  --color-noir: #121212;
-  --color-noir-soft: #1d1d1d;
+  --color-base: #050607;
+  --color-surface: #070808;
+  --color-ink: #f4f2ed;
+  --color-onink: #08090b;
+  --color-muted: #bdbbb5;
+  --color-line: #262827;
+  --color-gold: #d8a952;
+  --color-gold-bright: #f4d18a;
+  --color-gold-soft: rgba(216, 169, 82, 0.12);
+  --color-noir: #030405;
 
-  --font-display: var(--font-cormorant), Georgia, "Times New Roman", serif;
+  --font-display: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   --font-sans: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   --font-label: var(--font-rajdhani), var(--font-geist-sans), sans-serif;
-
-  --shadow-card: 0 1px 2px rgba(23, 23, 23, 0.04), 0 8px 24px rgba(23, 23, 23, 0.06);
-  --shadow-card-hover: 0 2px 4px rgba(23, 23, 23, 0.06), 0 18px 44px rgba(23, 23, 23, 0.1);
-}
-
-/* ------------------------------------------------------------------ */
-/* Dark palette — overrides the token values; every semantic utility    */
-/* (bg-base, text-ink, border-line …) flips automatically.              */
-/* --color-noir stays dark in both themes (permanently-dark bands).     */
-/* ------------------------------------------------------------------ */
-:root[data-theme="dark"] {
-  --color-base: #0e0f11;
-  --color-surface: #17191c;
-  --color-ink: #f2efe6;
-  --color-onink: #111111;
-  --color-muted: #9a968c;
-  --color-line: #2a2c30;
-  --color-gold: #d4b25a;
-  --color-gold-bright: #e4c874;
-  --color-gold-soft: #26200f;
-  --color-noir: #121212;
 
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.45);
   --shadow-card-hover: 0 2px 6px rgba(0, 0, 0, 0.5), 0 20px 48px rgba(0, 0, 0, 0.55);
 }
 
-/* ------------------------------------------------------------------ */
-/* Base                                                                */
-/* ------------------------------------------------------------------ */
-* {
-  box-sizing: border-box;
+.tone-light {
+  --color-base: #f5f2ec;
+  --color-surface: #f3f0ea;
+  --color-ink: #171717;
+  --color-onink: #ffffff;
+  --color-muted: #65625d;
+  --color-line: #d0ccc4;
+  --color-gold: #b8893d;
+  --color-gold-bright: #b8893d;
+  --color-gold-soft: rgba(184, 137, 61, 0.08);
+  --shadow-card: 0 1px 2px rgba(23, 23, 23, 0.04), 0 8px 24px rgba(23, 23, 23, 0.06);
+  --shadow-card-hover: 0 2px 4px rgba(23, 23, 23, 0.06), 0 18px 44px rgba(23, 23, 23, 0.1);
 }
 
-html {
-  scroll-behavior: smooth;
-  -webkit-text-size-adjust: 100%;
-}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
@@ -68,30 +45,15 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-::-webkit-scrollbar {
-  width: 10px;
-}
-::-webkit-scrollbar-track {
-  background: var(--color-base);
-}
-::-webkit-scrollbar-thumb {
-  background: #d8d3c6;
-  border-radius: 999px;
-  border: 3px solid var(--color-base);
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-gold);
-}
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--color-base); }
+::-webkit-scrollbar-thumb { background: var(--color-line); border-radius: 999px; border: 3px solid var(--color-base); }
+::-webkit-scrollbar-thumb:hover { background: var(--color-gold); }
 
-::selection {
-  background: var(--color-gold);
-  color: #fff;
-}
+::selection { background: var(--color-gold); color: var(--color-onink); }
 
-/* Eyebrow label helper (uppercase tracked label used across sections) */
 .eyebrow {
   font-family: var(--font-label);
   text-transform: uppercase;
@@ -100,18 +62,6 @@ body {
   font-size: 0.72rem;
 }
 
-/* ------------------------------------------------------------------ */
-/* Theme switch crossfade (View Transitions API)                       */
-/* ------------------------------------------------------------------ */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 0.45s;
-  animation-timing-function: ease;
-}
-
-/* ------------------------------------------------------------------ */
-/* Scroll reveal (driven by <Reveal>)                                  */
-/* ------------------------------------------------------------------ */
 .reveal {
   opacity: 0;
   transform: translateY(24px);
@@ -124,18 +74,11 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  *,
-  *::before,
-  *::after {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
-  .reveal {
-    opacity: 1;
-    transform: none;
-  }
+  .reveal { opacity: 1; transform: none; }
 }
