@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
 import Container from "@/app/components/ui/Container";
 import PageHeader from "@/app/components/ui/PageHeader";
-import SectionHeading from "@/app/components/ui/SectionHeading";
 import Reveal from "@/app/components/ui/Reveal";
 import Stats from "@/app/components/sections/Stats";
-import ExpertiseBars from "@/app/components/sections/ExpertiseBars";
 import CTA from "@/app/components/sections/CTA";
 
 export const metadata: Metadata = {
   title: "About",
   description:
-    "The story behind Thoth Sparkz — where timeless wisdom meets modern digital craft, from Wayanad, Kerala.",
+    "The story behind Thoth Sparkz — intelligence that sparks transformation, from Wayanad, Kerala.",
 };
 
 export default function AboutPage() {
@@ -18,17 +16,18 @@ export default function AboutPage() {
     <>
       <PageHeader
         eyebrow="Our Story"
-        title="Where wisdom meets spark"
-        subtitle="Inspired by the ancient god of knowledge, we build brands and products charged with purpose."
+        title="Intelligence that sparks transformation"
+        subtitle="Inspired by the ancient god of knowledge, we build brands and growth systems charged with purpose."
       />
 
-      <section className="py-24">
-        <Container className="grid items-center gap-16 lg:grid-cols-2">
+      <section className="tone-light bg-base py-24">
+        <Container className="grid items-start gap-16 lg:grid-cols-2">
           <Reveal>
-            <SectionHeading
-              eyebrow="Who We Are"
-              title="A studio born in the hills of Wayanad"
-            />
+            <span className="eyebrow text-gold">Who We Are</span>
+            <h2 className="mt-4 text-[clamp(1.6rem,2.5vw,1.8rem)] font-normal leading-snug tracking-wide text-ink">
+              A studio born in the hills of Wayanad
+            </h2>
+            <div className="mt-4 h-px w-12 bg-gold" />
             <p className="mt-6 leading-relaxed text-muted">
               Before the internet was born — before the first spark of digital
               light — there was a god who wielded the power of knowledge, wisdom,
@@ -36,29 +35,33 @@ export default function AboutPage() {
               spark was kindled in the lush hills of Wayanad, Kerala.
             </p>
             <p className="mt-4 leading-relaxed text-muted">
-              We don’t settle for ordinary. Every campaign, every pixel, and every
+              We don&apos;t settle for ordinary. Every campaign, every pixel, and every
               line of code we craft is charged with intent — to make your brand not
               just visible, but unforgettable.
             </p>
           </Reveal>
 
           <Reveal delay={120}>
-            <div className="rounded-2xl border border-line bg-surface p-8 shadow-[var(--shadow-card)] sm:p-10">
-              <h3 className="eyebrow text-gold">Our Expertise</h3>
-              <div className="mt-6">
-                <ExpertiseBars />
-              </div>
-            </div>
+            <span className="eyebrow text-gold">Our Philosophy</span>
+            <h2 className="mt-4 text-[clamp(1.6rem,2.5vw,1.8rem)] font-normal leading-snug tracking-wide text-ink">
+              Ideas are everywhere. Transformation is not.
+            </h2>
+            <div className="mt-4 h-px w-12 bg-gold" />
+            <p className="mt-6 leading-relaxed text-muted">
+              At Thoth Sparkz, we combine the intelligence of Thoth with
+              the creative energy of Sparkz — to build brands, create
+              opportunities and drive meaningful growth.
+            </p>
+            <p className="mt-4 leading-relaxed text-muted">
+              Brand. Digital. Growth. Transformation. Together, they create
+              possibilities that last.
+            </p>
           </Reveal>
         </Container>
       </section>
 
       <Stats />
-
-      <CTA
-        title="Let’s build something worth remembering."
-        subtitle="Partner with a team that treats your brand like a legend in the making."
-      />
+      <CTA />
     </>
   );
 }

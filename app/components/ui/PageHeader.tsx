@@ -9,19 +9,19 @@ type Props = {
 
 export default function PageHeader({ eyebrow, title, subtitle }: Props) {
   return (
-    <section className="relative overflow-hidden border-b border-line bg-surface">
+    <section className="relative overflow-hidden bg-noir pt-[86px]">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(50% 70% at 50% 0%, rgba(200,162,76,0.08), transparent 70%)",
+            "radial-gradient(50% 70% at 50% 0%, rgba(216,169,82,0.10), transparent 70%)",
         }}
       />
       <Container className="relative py-20 text-center sm:py-24">
         <Reveal>
           <span className="eyebrow inline-block text-gold">{eyebrow}</span>
-          <h1 className="mx-auto mt-4 max-w-3xl font-display text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl">
+          <h1 className="mx-auto mt-4 max-w-3xl text-[clamp(2.2rem,5vw,3rem)] font-normal leading-[1.1] tracking-wide">
             {title}
           </h1>
           {subtitle && (

@@ -58,10 +58,12 @@ export default function ContactForm() {
   if (submitted) {
     return (
       <div className="rounded-2xl border border-line bg-surface p-10 text-center shadow-[var(--shadow-card)]">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gold-soft text-2xl text-gold">
-          ✓
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gold-soft text-gold">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
         </div>
-        <h3 className="mt-5 font-display text-2xl font-semibold text-ink">
+        <h3 className="mt-5 text-2xl font-semibold text-ink">
           Message sent
         </h3>
         <p className="mt-2 text-muted">
@@ -99,9 +101,10 @@ export default function ContactForm() {
               errors.name ? "border-red-400" : "border-line"
             }`}
             aria-invalid={!!errors.name}
+            aria-describedby={errors.name ? "name-error" : undefined}
           />
           {errors.name && (
-            <p className="mt-1 text-xs text-red-600">{errors.name}</p>
+            <p id="name-error" className="mt-1 text-xs text-red-600">{errors.name}</p>
           )}
         </div>
         <div>
@@ -118,9 +121,10 @@ export default function ContactForm() {
               errors.email ? "border-red-400" : "border-line"
             }`}
             aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? "email-error" : undefined}
           />
           {errors.email && (
-            <p className="mt-1 text-xs text-red-600">{errors.email}</p>
+            <p id="email-error" className="mt-1 text-xs text-red-600">{errors.email}</p>
           )}
         </div>
       </div>
@@ -139,9 +143,10 @@ export default function ContactForm() {
             errors.subject ? "border-red-400" : "border-line"
           }`}
           aria-invalid={!!errors.subject}
+          aria-describedby={errors.subject ? "subject-error" : undefined}
         />
         {errors.subject && (
-          <p className="mt-1 text-xs text-red-600">{errors.subject}</p>
+          <p id="subject-error" className="mt-1 text-xs text-red-600">{errors.subject}</p>
         )}
       </div>
 
@@ -159,13 +164,14 @@ export default function ContactForm() {
             errors.message ? "border-red-400" : "border-line"
           }`}
           aria-invalid={!!errors.message}
+          aria-describedby={errors.message ? "message-error" : undefined}
         />
         {errors.message && (
-          <p className="mt-1 text-xs text-red-600">{errors.message}</p>
+          <p id="message-error" className="mt-1 text-xs text-red-600">{errors.message}</p>
         )}
       </div>
 
-      <Button type="submit" variant="primary" size="lg" className="mt-7 w-full">
+      <Button type="submit" variant="gold" size="lg" className="mt-7 w-full">
         Send Message
       </Button>
     </form>

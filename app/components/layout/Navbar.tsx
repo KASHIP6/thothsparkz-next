@@ -4,8 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Logo from "@/app/components/ui/Logo";
-import Button from "@/app/components/ui/Button";
-import ThemeToggle from "@/app/components/ui/ThemeToggle";
 import { navItems } from "@/lib/content";
 
 export default function Navbar() {
@@ -13,7 +11,6 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Subtle solid/shadow state once the page is scrolled.
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
     onScroll();
@@ -21,12 +18,9 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Lock body scroll while the mobile menu is open.
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = ""; };
   }, [menuOpen]);
 
   const isActive = (href: string) =>
@@ -36,74 +30,72 @@ export default function Navbar() {
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "border-b border-line bg-base/85 backdrop-blur-md"
-          : "border-b border-transparent bg-base/0"
+          ? "border-b border-line bg-noir/90 backdrop-blur-md"
+          : "border-b border-transparent bg-noir/70"
       }`}
     >
-      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6 sm:px-8">
+      <nav className="mx-auto flex h-[86px] max-w-[1440px] items-center justify-between px-6 sm:px-8 lg:px-20">
         <Link href="/" aria-label="Thoth Sparkz — home">
           <Logo />
         </Link>
 
-        {/* Desktop nav */}
-        <ul className="hidden items-center gap-8 md:flex">
+        <ul className="hidden items-center gap-10 lg:flex">
           {navItems.map((item) => (
             <li key={item.href}>
               <Link
                 href={item.href}
-                className={`font-label text-xs font-semibold uppercase tracking-[0.16em] transition-colors ${
+                className={`relative text-sm transition-colors ${
                   isActive(item.href)
-                    ? "text-gold"
+                    ? "text-ink"
                     : "text-muted hover:text-ink"
                 }`}
               >
                 {item.label}
+                {isActive(item.href) && (
+                  <span className="absolute -bottom-1 left-0 h-0.5 w-6 bg-gold" />
+                )}
               </Link>
             </li>
           ))}
         </ul>
 
-        {/* Right cluster — theme toggle stays visible at every breakpoint */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          <ThemeToggle />
+        <div className="flex items-center gap-3">
+          <Link
+            href="/contact"
+            className="hidden rounded-full border border-gold/60 px-6 py-2.5 font-label text-xs font-bold uppercase tracking-[0.1em] text-ink transition-all hover:border-gold hover:text-gold lg:inline-flex"
+          >
+            Let&apos;s Talk&ensp;→
+          </Link>
 
-          <div className="hidden md:block">
-            <Button href="/contact" variant="primary" size="md">
-              Get in Touch
-            </Button>
-          </div>
-
-          {/* Mobile menu toggle */}
           <button
             type="button"
             onClick={() => setMenuOpen((v) => !v)}
             aria-label="Toggle navigation menu"
             aria-expanded={menuOpen}
-            className="relative z-50 flex h-10 w-10 flex-col items-center justify-center gap-1.5 md:hidden"
+            className="relative z-50 flex h-10 w-10 flex-col items-center justify-center gap-1.5 lg:hidden"
           >
-          <span
-            className={`block h-0.5 w-6 bg-ink transition-transform duration-300 ${
-              menuOpen ? "translate-y-2 rotate-45" : ""
-            }`}
-          />
-          <span
-            className={`block h-0.5 w-6 bg-ink transition-opacity duration-300 ${
-              menuOpen ? "opacity-0" : ""
-            }`}
-          />
-          <span
-            className={`block h-0.5 w-6 bg-ink transition-transform duration-300 ${
-              menuOpen ? "-translate-y-2 -rotate-45" : ""
-            }`}
-          />
+            <span
+              className={`block h-0.5 w-6 bg-ink transition-transform duration-300 ${
+                menuOpen ? "translate-y-2 rotate-45" : ""
+              }`}
+            />
+            <span
+              className={`block h-0.5 w-6 bg-ink transition-opacity duration-300 ${
+                menuOpen ? "opacity-0" : ""
+              }`}
+            />
+            <span
+              className={`block h-0.5 w-6 bg-ink transition-transform duration-300 ${
+                menuOpen ? "-translate-y-2 -rotate-45" : ""
+              }`}
+            />
           </button>
         </div>
       </nav>
 
-      {/* Mobile menu */}
       <div
-        className={`overflow-hidden border-t border-line bg-base transition-[max-height] duration-300 md:hidden ${
-          menuOpen ? "max-h-96" : "max-h-0 border-t-transparent"
+        className={`overflow-hidden border-t border-line bg-noir transition-[max-height] duration-300 lg:hidden ${
+          menuOpen ? "max-h-[500px]" : "max-h-0 border-t-transparent"
         }`}
       >
         <ul className="flex flex-col px-6 py-2">
@@ -112,7 +104,7 @@ export default function Navbar() {
               <Link
                 href={item.href}
                 onClick={() => setMenuOpen(false)}
-                className={`block py-4 font-label text-sm font-semibold uppercase tracking-[0.14em] transition-colors ${
+                className={`block py-4 text-sm transition-colors ${
                   isActive(item.href) ? "text-gold" : "text-muted"
                 }`}
               >
@@ -121,15 +113,13 @@ export default function Navbar() {
             </li>
           ))}
           <li className="py-4">
-            <Button
+            <Link
               href="/contact"
-              variant="primary"
-              size="md"
-              className="w-full"
               onClick={() => setMenuOpen(false)}
+              className="inline-flex rounded-full border border-gold/60 px-6 py-2.5 font-label text-xs font-bold uppercase tracking-[0.1em] text-ink transition-all hover:border-gold"
             >
-              Get in Touch
-            </Button>
+              Let&apos;s Talk&ensp;→
+            </Link>
           </li>
         </ul>
       </div>
